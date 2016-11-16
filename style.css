@@ -98,6 +98,10 @@ body {
 .cityChoices:hover {
 	color: #b2cce5;
 }
+#name {
+	color: #fff;
+	margin-top: 2%;
+}
 @media screen and (-webkit-min-device-pixel-ratio:0) { 
   select,
   textarea,
