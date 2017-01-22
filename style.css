@@ -62,6 +62,9 @@ body {
 	width: 70%;
 	text-align: center;
 }
+#inputText:focus {
+	outline: none;
+}
 #inputSubmit {
 	-webkit-appearance: none;
 	-moz-appearance: none;
