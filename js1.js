@@ -50,6 +50,8 @@ function getWeather(lat, lon){ //gets the weather, then calls writeWeather to wr
 function writeWeather(data){ //uses DOM manipulation to write the temperature, description, and icon
 	temperature = Math.floor(data.currently.temperature);
 	elTemperature.textContent = temperature;
+	elDegree.textContent = String.fromCharCode(176)+"F";
+	elUnit.className = "F";
 	description = data.currently.summary;
 	elDescription.textContent = description;
 	icon = data.currently.icon;		
