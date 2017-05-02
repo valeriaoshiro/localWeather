@@ -20,13 +20,13 @@ var elChoices = document.getElementById("choices");
 function init(){
 	$.ajax({ //gets the user's initial location
 		url: "//ip-api.com/json",
-      async: false,
-      dataType: "json",
-      success: function(data) {
-      	latitude = data.lat;
-         longitude = data.lon; 
-         city = data.city + ", " +data.region + ", " + data.countryCode;
-         console.log(latitude, longitude, city);
+      	async: true,
+      	dataType: "json",
+      	success: function(data) {
+      		latitude = data.lat;
+         	longitude = data.lon; 
+         	city = data.city + ", " +data.region + ", " + data.countryCode;
+         	console.log(latitude, longitude, city);
        }
 	});//end of ajax
 	writeCity(city);				
@@ -170,7 +170,7 @@ function itemChosen(e, data){ //a city was chosen from the list of same city nam
 }
 
 //executes when DOM is fully loaded
-document.addEventListener('DOMContentLoaded', function () {
+$().ready(function () {
 	init();//starts the code
 });
 
