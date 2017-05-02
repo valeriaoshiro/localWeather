@@ -19,13 +19,14 @@ var elChoices = document.getElementById("choices");
 
 function init(){
 	$.ajax({ //gets the user's initial location
-		url: "http://ip-api.com/json",
+		url: "//ip-api.com/json",
       async: false,
       dataType: "json",
       success: function(data) {
       	latitude = data.lat;
          longitude = data.lon; 
          city = data.city + ", " +data.region + ", " + data.countryCode;
+         console.log(latitude, longitude, city);
        }
 	});//end of ajax
 	writeCity(city);				
@@ -44,7 +45,7 @@ function writeCity(c){ //uses DOM manipulation to write the city, if there is a 
 }
 
 function getWeather(lat, lon){ //gets the weather, then calls writeWeather to write it
-	$.getJSON("https://api.darksky.net/forecast/26ff1aa51ea8ab42ce3dd8670796d73e/"+lat+","+lon+"?callback=?", writeWeather);
+	$.getJSON("//api.darksky.net/forecast/26ff1aa51ea8ab42ce3dd8670796d73e/"+lat+","+lon+"?callback=?", writeWeather);
 }
 
 function writeWeather(data){ //uses DOM manipulation to write the temperature, description, and icon
@@ -122,7 +123,7 @@ function getInputSubmit(e){ //gets the value from input when submit button is pr
 
 function getLatLon(c){ //gets the city, converts to latitude and longitude. calls inputCityOptions to validate city
 	var url = c.replace(" ", "+");
-	url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + url + "&key=AIzaSyAP_psCmoAIO-Vd7ZtMUQUdyJYxyHl1anE";
+	url = "//maps.googleapis.com/maps/api/geocode/json?address=" + url + "&key=AIzaSyAP_psCmoAIO-Vd7ZtMUQUdyJYxyHl1anE";
 	console.log(url);
 	$.getJSON(url, inputCityOptions);
 }
