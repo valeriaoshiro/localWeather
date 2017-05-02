@@ -5,7 +5,7 @@
 //write weather
 //get user's input location
 
-var latitude, longitude, city, temperature, description, icon;
+var latitude, longitude, city, temperatureF, temperatureC, description, icon;
 //starts with el(as in element) to show it's a HTML element
 var elCity = document.getElementById("city");
 var elInputText = document.getElementById("inputText");
@@ -45,30 +45,37 @@ function writeCity(c){ //uses DOM manipulation to write the city, if there is a 
 }
 
 function getWeather(lat, lon){ //gets the weather, then calls writeWeather to write it
-	$.getJSON("//api.darksky.net/forecast/26ff1aa51ea8ab42ce3dd8670796d73e/"+lat+","+lon+"?callback=?", writeWeather);
+	$.getJSON("http://api.wunderground.com/api/83a94fa8dcb1eccd/conditions/q/"+lat+","+lon+".json", writeWeather);
 }
 
 function writeWeather(data){ //uses DOM manipulation to write the temperature, description, and icon
-	temperature = Math.floor(data.currently.temperature);
-	elTemperature.textContent = temperature;
+	temperatureF = Math.floor(data.current_observation.temp_f);
+	temperatureC = Math.floor(data.current_observation.temp_c);
+	elTemperature.textContent = temperatureF;
 	elDegree.textContent = String.fromCharCode(176)+"F";
 	elUnit.className = "F";
-	description = data.currently.summary;
+	description = data.current_observation.weather;
 	elDescription.textContent = description;
-	icon = data.currently.icon;		
+	icon = data.current_observation.icon;		
 	switch(icon){ //changes the icon depending on description
-			case "clear-day":
+			case "clear":
+			case "sunny":
 				elIcon.className = "wi wi-day-sunny";
 				break;
-			case "clear-night":
-				elIcon.className = "wi wi-night-clear";
-				break;
+			case "chancerain":
+			case "chancetstorms":
 			case "rain":
+			case "tstorms":
+			case "unknown":
 				elIcon.className = "wi wi-rain";
 				break;
+			case "chanceflurries":
+			case "chancesnow":
+			case "flurries":
 			case "snow":
 				elIcon.className = "wi wi-snow";
 				break;
+			case "chancesleet":
 			case "sleet":
 				elIcon.className = "wi wi-sleet";
 				break;
@@ -76,16 +83,18 @@ function writeWeather(data){ //uses DOM manipulation to write the temperature, d
 				elIcon.className = "wi wi-cloudy-gusts";
 				break;
 			case "fog":
+			case "hazy":
 				elIcon.className = "wi wi-fog";
 				break;	
 			case "cloudy":
+			case "mostlycloudy":
+			case "partlysunny":
 				elIcon.className = "wi wi-cloudy";
 				break;
 			case "partly-cloudy-day":
+			case "mostlysunny":
+			case "partlycloudy":
 				elIcon.className = "wi wi-day-cloudy";
-				break;
-			case "partly-cloudy-night":
-				elIcon.className = "wi wi-night-alt-cloudy";
 				break;
 		}
 }
@@ -93,11 +102,11 @@ function writeWeather(data){ //uses DOM manipulation to write the temperature, d
 function convertUnit(){ //change from F to C, and the other way around
 	var tempNum = Number(elTemperature.textContent);
 	if(elUnit.className === "F"){ //if already F, change to C
-		elTemperature.textContent = Math.round((tempNum-32)/(1.8));	
+		elTemperature.textContent = temperatureC;	
 		elDegree.textContent = String.fromCharCode(176)+"C";
 		elUnit.className = "C";
 	} else { //if already C, change to F
-		elTemperature.textContent = Math.round((tempNum*1.8)+32);	
+		elTemperature.textContent = temperatureF;	
 		elDegree.textContent = String.fromCharCode(176)+"F";
 		elUnit.className = "F";
 	}
