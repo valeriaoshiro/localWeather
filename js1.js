@@ -19,7 +19,7 @@ var elChoices = document.getElementById("choices");
 
 function init(){
 	$.ajax({ //gets the user's initial location
-		url: "//ip-api.com/json",
+		url: "http://ip-api.com/json",
       	async: true,
       	dataType: "json",
       	success: function(data) {
