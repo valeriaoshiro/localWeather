@@ -19,7 +19,7 @@ var elChoices = document.getElementById("choices");
 
 function init(){
 	$.ajax({ //gets the user's initial location
-		url: "http://ip-api.com/json",
+		url: "//ip-api.com/json",
       	async: true,
       	dataType: "json",
       	success: function(data) {
@@ -45,7 +45,7 @@ function writeCity(c){ //uses DOM manipulation to write the city, if there is a 
 }
 
 function getWeather(lat, lon){ //gets the weather, then calls writeWeather to write it
-	var urltemp = "http://api.wunderground.com/api/83a94fa8dcb1eccd/conditions/q/"+String(lat)+","+String(lon)+".json";
+	var urltemp = "//api.wunderground.com/api/83a94fa8dcb1eccd/conditions/q/"+String(lat)+","+String(lon)+".json";
 	console.log(urltemp);
 	$.getJSON(urltemp, writeWeather);
 }
