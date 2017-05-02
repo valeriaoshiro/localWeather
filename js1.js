@@ -20,7 +20,7 @@ var elChoices = document.getElementById("choices");
 function init(){
 	$.ajax({ //gets the user's initial location
 		url: "http://ip-api.com/json",
-      	async: true,
+      	async: false,
       	dataType: "json",
       	success: function(data) {
       		latitude = data.lat;
@@ -45,10 +45,13 @@ function writeCity(c){ //uses DOM manipulation to write the city, if there is a 
 }
 
 function getWeather(lat, lon){ //gets the weather, then calls writeWeather to write it
-	$.getJSON("http://api.wunderground.com/api/83a94fa8dcb1eccd/conditions/q/"+lat+","+lon+".json", writeWeather);
+	var urltemp = "http://api.wunderground.com/api/83a94fa8dcb1eccd/conditions/q/"+String(lat)+","+String(lon)+".json";
+	console.log(urltemp);
+	$.getJSON(urltemp, writeWeather);
 }
 
 function writeWeather(data){ //uses DOM manipulation to write the temperature, description, and icon
+	console.log(data);
 	temperatureF = Math.floor(data.current_observation.temp_f);
 	temperatureC = Math.floor(data.current_observation.temp_c);
 	elTemperature.textContent = temperatureF;
@@ -132,12 +135,13 @@ function getInputSubmit(e){ //gets the value from input when submit button is pr
 
 function getLatLon(c){ //gets the city, converts to latitude and longitude. calls inputCityOptions to validate city
 	var url = c.replace(" ", "+");
-	url = "//maps.googleapis.com/maps/api/geocode/json?address=" + url + "&key=AIzaSyAP_psCmoAIO-Vd7ZtMUQUdyJYxyHl1anE";
+	url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + url + "&key=AIzaSyAP_psCmoAIO-Vd7ZtMUQUdyJYxyHl1anE";
 	console.log(url);
 	$.getJSON(url, inputCityOptions);
 }
 
 function inputCityOptions(data){ 
+	// Google is now returning 1 answer. No need to check if there is more than one match.
 	if(data.results.length > 1){ //if there is more than one city with the same name					
 		while (elChoices.firstChild) { //before it writes, make sure it's empty
    		elChoices.removeChild(elChoices.firstChild);
