@@ -20,17 +20,17 @@ var elChoices = document.getElementById("choices");
 function init(){
 	$.ajax({ //gets the user's initial location
 		url: "http://ip-api.com/json",
-      	async: false,
+      	async: true,
       	dataType: "json",
       	success: function(data) {
       		latitude = data.lat;
          	longitude = data.lon; 
          	city = data.city + ", " +data.region + ", " + data.countryCode;
          	console.log(latitude, longitude, city);
+         	writeCity(city);				
+			getWeather(latitude, longitude);
        }
 	});//end of ajax
-	writeCity(city);				
-	getWeather(latitude, longitude);
 	elUnit.addEventListener("click", convertUnit, false); //change from F to C, and the other way around
 	elInputText.addEventListener("keyup", getInputEnter, false); //gets the value from input box when enter key is pressed
 	elInputSubmit.addEventListener("click", getInputSubmit, false); //gets the value from input when submit button is clicked
