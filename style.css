@@ -93,6 +93,11 @@ body {
 #choices > ul {
 	list-style-type: none;
 }
+#choices > ul > li:hover {
+	cursor: pointer;
+	text-decoration: underline;
+
+}
 .cityChoices {
 	color: white;
 	text-decoration: none;
