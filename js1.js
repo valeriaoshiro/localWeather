@@ -6,6 +6,8 @@
 //get user's input location
 
 var latitude, longitude, city, temperatureF, temperatureC, description, icon;
+var cityChoices = [];
+var fromChoices = false;
 //starts with el(as in element) to show it's a HTML element
 var elCity = document.getElementById("city");
 var elInputText = document.getElementById("inputText");
@@ -30,74 +32,74 @@ function init(){
 	elInputSubmit.addEventListener("click", getInputSubmit, false); //gets the value from input when submit button is clicked
 }
 
-
-function getWeatherAndCity(lat, lon){ //gets the weather, then calls writeWeatherAndCity to write it
+function getWeatherAndCity(lat, lon, cityX){ //gets the weather, then calls writeWeatherAndCity to write it
 	var urltemp = "https://cors-anywhere.herokuapp.com/http://api.wunderground.com/api/83a94fa8dcb1eccd/conditions/q/"+String(lat)+","+String(lon)+".json";
 	console.log(urltemp);
-	$.getJSON(urltemp, writeWeatherAndCity);
-}
-
-function writeWeatherAndCity(data){ //uses DOM manipulation to write the temperature, description, icon, and city
-	console.log(data);
-
-	//write the temp
-	temperatureF = Math.floor(data.current_observation.temp_f);
-	temperatureC = Math.floor(data.current_observation.temp_c);
-	elTemperature.textContent = temperatureF;
-	elDegree.textContent = String.fromCharCode(176)+"F";
-	elUnit.className = "F";
-	//write the description
-	description = data.current_observation.weather;
-	elDescription.textContent = description;
-	//write the icons depending on description
-	icon = data.current_observation.icon;		
-	switch(icon){ 
-		case "clear":
-		case "sunny":
-			elIcon.className = "wi wi-day-sunny";
-			break;
-		case "chancerain":
-		case "chancetstorms":
-		case "rain":
-		case "tstorms":
-		case "unknown":
-			elIcon.className = "wi wi-rain";
-			break;
-		case "chanceflurries":
-		case "chancesnow":
-		case "flurries":
-		case "snow":
-			elIcon.className = "wi wi-snow";
-			break;
-		case "chancesleet":
-		case "sleet":
-			elIcon.className = "wi wi-sleet";
-			break;
-		case "wind":
-			elIcon.className = "wi wi-cloudy-gusts";
-			break;
-		case "fog":
-		case "hazy":
-			elIcon.className = "wi wi-fog";
-			break;	
-		case "cloudy":
-		case "mostlycloudy":
-		case "partlysunny":
-			elIcon.className = "wi wi-cloudy";
-			break;
-		case "partly-cloudy-day":
-		case "mostlysunny":
-		case "partlycloudy":
-			elIcon.className = "wi wi-day-cloudy";
-			break;
-	}	
-	//write the city, and needs to remove the bottom div (if there is any)	
-	city = data.current_observation.display_location.full;
-	elCity.textContent = city;
-	while (elChoices.firstChild) {
-   	elChoices.removeChild(elChoices.firstChild);
-	}
-	elChoices.style.display = "none";	
+	$.getJSON(urltemp, function(data){
+		//write the temp
+		temperatureF = Math.floor(data.current_observation.temp_f);
+		temperatureC = Math.floor(data.current_observation.temp_c);
+		elTemperature.textContent = temperatureF;
+		elDegree.textContent = String.fromCharCode(176)+"F";
+		elUnit.className = "F";
+		//write the description
+		description = data.current_observation.weather;
+		elDescription.textContent = description;
+		//write the icons depending on description
+		icon = data.current_observation.icon;		
+		switch(icon){ 
+			case "clear":
+			case "sunny":
+				elIcon.className = "wi wi-day-sunny";
+				break;
+			case "chancerain":
+			case "chancetstorms":
+			case "rain":
+			case "tstorms":
+			case "unknown":
+				elIcon.className = "wi wi-rain";
+				break;
+			case "chanceflurries":
+			case "chancesnow":
+			case "flurries":
+			case "snow":
+				elIcon.className = "wi wi-snow";
+				break;
+			case "chancesleet":
+			case "sleet":
+				elIcon.className = "wi wi-sleet";
+				break;
+			case "wind":
+				elIcon.className = "wi wi-cloudy-gusts";
+				break;
+			case "fog":
+			case "hazy":
+				elIcon.className = "wi wi-fog";
+				break;	
+			case "cloudy":
+			case "mostlycloudy":
+			case "partlysunny":
+				elIcon.className = "wi wi-cloudy";
+				break;
+			case "partly-cloudy-day":
+			case "mostlysunny":
+			case "partlycloudy":
+				elIcon.className = "wi wi-day-cloudy";
+				break;
+		}	
+		//write the city, and needs to remove the bottom div (if there is any)	
+		if(cityX){
+			city = cityX;
+		} else {
+			city = data.current_observation.display_location.full;
+		}
+		
+		elCity.textContent = city;
+		while (elChoices.firstChild) {
+	   	elChoices.removeChild(elChoices.firstChild);
+		}
+		elChoices.style.display = "none";	
+	});
 }
 
 function convertUnit(){ //change from F to C, and the other way around
@@ -132,26 +134,44 @@ function getInputSubmit(e){ //gets the value from input when submit button is pr
 }	
 
 function getLatLon(c){ //gets the city, converts to latitude and longitude. calls inputCityOptions to validate city
-	var url = c.replace(" ", "+");
+	var url = c.replace(/\s/g, "+");
 	url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + url + "&key=AIzaSyAP_psCmoAIO-Vd7ZtMUQUdyJYxyHl1anE";
-	console.log(url);
 	$.getJSON(url, inputCityOptions);
 }
 
 function inputCityOptions(data){ 
+	//console.log("data", data.results[0].formatted_address);
 	if(data.results.length === 0) { //invalid city input
 		elChoices.style.display = "block";
 		var p = document.createElement("p");
 		p.innerHTML = "City not found"; 
 		elChoices.appendChild(p);
 	} else {
-		latitude = data.results[0].geometry.location.lat;
-		longitude = data.results[0].geometry.location.lng;
-		city = data.results[0].formatted_address;
-		getWeatherAndCity(latitude, longitude);
+		elChoices.style.display = "block";
+		while (elChoices.firstChild) {
+   			elChoices.removeChild(elChoices.firstChild);
+		}
+		cityChoices = [];
+		var ul = document.createElement("ul");
+		for(var i = 0; i < data.results.length; i++){
+			var li = document.createElement("li");
+			li.innerHTML = data.results[i].formatted_address;
+			li.addEventListener('click', cityClick);
+			cityChoices.push({city: data.results[i].formatted_address, lat: data.results[i].geometry.location.lat, lng: data.results[i].geometry.location.lng});
+			ul.appendChild(li);
+		}
+		elChoices.appendChild(ul);
 	}
 }
 
+function cityClick(city){
+	console.log("City was clicked", city.target.innerHTML);
+	for(var i = 0; i < cityChoices.length; i++){
+		if(city.target.innerHTML === cityChoices[i].city){
+			getWeatherAndCity(cityChoices[i].lat, cityChoices[i].lng, cityChoices[i].city);
+		}
+	}
+}
 
 //executes when DOM is fully loaded
 $().ready(function () {

@@ -90,6 +90,9 @@ body {
 	padding-top: 2%;
 	padding-bottom: 2%;
 }
+#choices > ul {
+	list-style-type: none;
+}
 .cityChoices {
 	color: white;
 	text-decoration: none;
