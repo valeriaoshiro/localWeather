@@ -173,7 +173,7 @@ function getWeatherAndCity(lat, lon, cityX) {
     elDescription.textContent = description; //write the icons depending on description
 
     let img = document.createElement('img');
-    img.src = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+    img.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
     img.alt = `${data.weather.description} icon`;
 
     while (elIcon.firstChild) elIcon.removeChild(elIcon.firstChild);
@@ -235,7 +235,7 @@ function getInputSubmit(e) {
 function getLatLon(c) {
   //gets the city, converts to latitude and longitude. calls inputCityOptions to validate city
   var url = c.replace(/\s/g, "+");
-  url = `http://open.mapquestapi.com/geocoding/v1/address?key=${GEOCODINGAPIKEY}&location=${url}&thumbMaps=false&maxResults=5`;
+  url = `https://open.mapquestapi.com/geocoding/v1/address?key=${GEOCODINGAPIKEY}&location=${url}&thumbMaps=false&maxResults=5`;
   $.getJSON(url, inputCityOptions);
 }
 
@@ -319,7 +319,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62754" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50755" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
