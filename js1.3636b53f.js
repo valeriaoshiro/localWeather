@@ -127,9 +127,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 var latitude, longitude, city, temperatureF, temperatureC, description, icon;
 var cityChoices = [];
 var fromChoices = false;
-var degreeSymbol = String.fromCharCode(176);
-var WEATHERAPIKEY = "2bb1bedd40b4992a13c495cd393870d4";
-var GEOCODINGAPIKEY = "rS2UQpzHIG67MZCzm2jYNAXpIGHlnVvm"; //starts with el(as in element) to show it's a HTML element
+let degreeSymbol = String.fromCharCode(176);
+const WEATHERAPIKEY = "2bb1bedd40b4992a13c495cd393870d4";
+const GEOCODINGAPIKEY = "rS2UQpzHIG67MZCzm2jYNAXpIGHlnVvm"; //starts with el(as in element) to show it's a HTML element
 
 var elCity = document.getElementById("city");
 var elInputText = document.getElementById("inputText");
@@ -160,7 +160,7 @@ function init() {
 
 function getWeatherAndCity(lat, lon, cityX) {
   //gets the weather, then calls writeWeatherAndCity to write it
-  var urltemp = "https://api.openweathermap.org/data/2.5/weather?lat=".concat(lat, "&lon=").concat(lon, "&appid=").concat(WEATHERAPIKEY, "&units=imperial");
+  var urltemp = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${WEATHERAPIKEY}&units=imperial`;
   $.getJSON(urltemp, function (data) {
     //write the temp
     temperatureF = Math.floor(data.main.temp);
@@ -172,20 +172,18 @@ function getWeatherAndCity(lat, lon, cityX) {
     description = data.weather[0].main;
     elDescription.textContent = description; //write the icons depending on description
 
-    var img = document.createElement('img');
-    img.src = "http://openweathermap.org/img/wn/".concat(data.weather[0].icon, "@2x.png");
-    img.alt = "".concat(data.weather.description, " icon");
+    let img = document.createElement('img');
+    img.src = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+    img.alt = `${data.weather.description} icon`;
 
-    while (elIcon.firstChild) {
-      elIcon.removeChild(elIcon.firstChild);
-    }
+    while (elIcon.firstChild) elIcon.removeChild(elIcon.firstChild);
 
     elIcon.appendChild(img); //write the city, and needs to remove the bottom div (if there is any)	
 
     if (cityX) {
       city = cityX;
     } else {
-      city = "".concat(data.name, ", ").concat(data.sys.country);
+      city = `${data.name}, ${data.sys.country}`;
     }
 
     elCity.textContent = city;
@@ -237,7 +235,7 @@ function getInputSubmit(e) {
 function getLatLon(c) {
   //gets the city, converts to latitude and longitude. calls inputCityOptions to validate city
   var url = c.replace(/\s/g, "+");
-  url = "http://open.mapquestapi.com/geocoding/v1/address?key=".concat(GEOCODINGAPIKEY, "&location=").concat(url, "&thumbMaps=false&maxResults=5");
+  url = `http://open.mapquestapi.com/geocoding/v1/address?key=${GEOCODINGAPIKEY}&location=${url}&thumbMaps=false&maxResults=5`;
   $.getJSON(url, inputCityOptions);
 }
 
@@ -260,12 +258,12 @@ function inputCityOptions(data) {
 
     for (var i = 0; i < data.results[0].locations.length; i++) {
       var li = document.createElement("li");
-      var cityData = data.results[0].locations[i].adminArea5;
-      var stateData = data.results[0].locations[i].adminArea3;
-      var countryData = data.results[0].locations[i].adminArea1;
+      let cityData = data.results[0].locations[i].adminArea5;
+      let stateData = data.results[0].locations[i].adminArea3;
+      let countryData = data.results[0].locations[i].adminArea1;
 
       if (cityData && stateData && countryData) {
-        var formatedCity = "".concat(cityData, " ").concat(stateData, " ").concat(countryData);
+        let formatedCity = `${cityData} ${stateData} ${countryData}`;
         li.innerHTML = formatedCity;
         li.addEventListener('click', cityClick);
         cityChoices.push({
@@ -321,7 +319,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64447" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62754" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
