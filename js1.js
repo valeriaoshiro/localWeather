@@ -8,6 +8,9 @@
 var latitude, longitude, city, temperatureF, temperatureC, description, icon;
 var cityChoices = [];
 var fromChoices = false;
+let degreeSymbol = String.fromCharCode(176);
+const WEATHERAPIKEY = process.env.WEATHER_API_KEY;
+const GEOCODINGAPIKEY = process.env.GEOCODING_API_KEY;
 //starts with el(as in element) to show it's a HTML element
 var elCity = document.getElementById("city");
 var elInputText = document.getElementById("inputText");
@@ -33,65 +36,30 @@ function init(){
 }
 
 function getWeatherAndCity(lat, lon, cityX){ //gets the weather, then calls writeWeatherAndCity to write it
-	var urltemp = "https://cors-anywhere.herokuapp.com/http://api.wunderground.com/api/83a94fa8dcb1eccd/conditions/q/"+String(lat)+","+String(lon)+".json";
-	console.log(urltemp);
+	var urltemp = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${WEATHERAPIKEY}&units=imperial`;
 	$.getJSON(urltemp, function(data){
 		//write the temp
-		temperatureF = Math.floor(data.current_observation.temp_f);
-		temperatureC = Math.floor(data.current_observation.temp_c);
+		temperatureF = Math.floor(data.main.temp);
+		temperatureC = Math.floor((temperatureF - 32) / 1.8);
 		elTemperature.textContent = temperatureF;
-		elDegree.textContent = String.fromCharCode(176)+"F";
+		elDegree.textContent = degreeSymbol+"F";
 		elUnit.className = "F";
 		//write the description
-		description = data.current_observation.weather;
+		description = data.weather[0].main;
 		elDescription.textContent = description;
 		//write the icons depending on description
-		icon = data.current_observation.icon;		
-		switch(icon){ 
-			case "clear":
-			case "sunny":
-				elIcon.className = "wi wi-day-sunny";
-				break;
-			case "chancerain":
-			case "chancetstorms":
-			case "rain":
-			case "tstorms":
-			case "unknown":
-				elIcon.className = "wi wi-rain";
-				break;
-			case "chanceflurries":
-			case "chancesnow":
-			case "flurries":
-			case "snow":
-				elIcon.className = "wi wi-snow";
-				break;
-			case "chancesleet":
-			case "sleet":
-				elIcon.className = "wi wi-sleet";
-				break;
-			case "wind":
-				elIcon.className = "wi wi-cloudy-gusts";
-				break;
-			case "fog":
-			case "hazy":
-				elIcon.className = "wi wi-fog";
-				break;	
-			case "cloudy":
-			case "mostlycloudy":
-			case "partlysunny":
-				elIcon.className = "wi wi-cloudy";
-				break;
-			case "partly-cloudy-day":
-			case "mostlysunny":
-			case "partlycloudy":
-				elIcon.className = "wi wi-day-cloudy";
-				break;
-		}	
+		let img = document.createElement('img');	
+		img.src = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;	
+		img.alt = `${data.weather.description} icon`;
+		while(elIcon.firstChild)
+			elIcon.removeChild(elIcon.firstChild);
+		elIcon.appendChild(img);
+		
 		//write the city, and needs to remove the bottom div (if there is any)	
 		if(cityX){
 			city = cityX;
 		} else {
-			city = data.current_observation.display_location.full;
+			city = `${data.name}, ${data.sys.country}`;
 		}
 		
 		elCity.textContent = city;
@@ -106,11 +74,11 @@ function convertUnit(){ //change from F to C, and the other way around
 	var tempNum = Number(elTemperature.textContent);
 	if(elUnit.className === "F"){ //if already F, change to C
 		elTemperature.textContent = temperatureC;	
-		elDegree.textContent = String.fromCharCode(176)+"C";
+		elDegree.textContent = degreeSymbol+"C";
 		elUnit.className = "C";
 	} else { //if already C, change to F
 		elTemperature.textContent = temperatureF;	
-		elDegree.textContent = String.fromCharCode(176)+"F";
+		elDegree.textContent = degreeSymbol+"F";
 		elUnit.className = "F";
 	}
 }
@@ -119,7 +87,6 @@ function getInputEnter(e){ //gets the value from input box when Enter key is pre
 	var keyCode = e.keyCode || e.which;
 	if (keyCode === '13'){
 		var city = elInputText.value;
-		console.log(city);
 		elInputText.value = "";
 		getLatLon(city);
 	}
@@ -128,20 +95,19 @@ function getInputEnter(e){ //gets the value from input box when Enter key is pre
 function getInputSubmit(e){ //gets the value from input when submit button is pressed, calls getLatLon
 	e.preventDefault();
 	var city = elInputText.value;
-	console.log(city);
 	elInputText.value = "";
 	getLatLon(city);
 }	
 
 function getLatLon(c){ //gets the city, converts to latitude and longitude. calls inputCityOptions to validate city
 	var url = c.replace(/\s/g, "+");
-	url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + url + "&key=AIzaSyAP_psCmoAIO-Vd7ZtMUQUdyJYxyHl1anE";
+	url = `http://open.mapquestapi.com/geocoding/v1/address?key=${GEOCODINGAPIKEY}&location=${url}&thumbMaps=false&maxResults=5`;
+
 	$.getJSON(url, inputCityOptions);
 }
 
 function inputCityOptions(data){ 
-	//console.log("data", data.results[0].formatted_address);
-	if(data.results.length === 0) { //invalid city input
+	if(data.results[0].locations.length === 0) { //invalid city input
 		elChoices.style.display = "block";
 		var p = document.createElement("p");
 		p.innerHTML = "City not found"; 
@@ -153,19 +119,24 @@ function inputCityOptions(data){
 		}
 		cityChoices = [];
 		var ul = document.createElement("ul");
-		for(var i = 0; i < data.results.length; i++){
+		for(var i = 0; i < data.results[0].locations.length; i++){
 			var li = document.createElement("li");
-			li.innerHTML = data.results[i].formatted_address;
-			li.addEventListener('click', cityClick);
-			cityChoices.push({city: data.results[i].formatted_address, lat: data.results[i].geometry.location.lat, lng: data.results[i].geometry.location.lng});
-			ul.appendChild(li);
+			let cityData = data.results[0].locations[i].adminArea5;
+			let stateData = data.results[0].locations[i].adminArea3;
+			let countryData = data.results[0].locations[i].adminArea1;
+			if(cityData && stateData && countryData){
+				let formatedCity = `${cityData} ${stateData} ${countryData}`;
+				li.innerHTML =  formatedCity
+				li.addEventListener('click', cityClick);
+				cityChoices.push({city: formatedCity, lat: data.results[0].locations[i].latLng.lat, lng: data.results[0].locations[i].latLng.lng});
+				ul.appendChild(li);
+			}
 		}
 		elChoices.appendChild(ul);
 	}
 }
 
 function cityClick(city){
-	console.log("City was clicked", city.target.innerHTML);
 	for(var i = 0; i < cityChoices.length; i++){
 		if(city.target.innerHTML === cityChoices[i].city){
 			getWeatherAndCity(cityChoices[i].lat, cityChoices[i].lng, cityChoices[i].city);
@@ -177,7 +148,3 @@ function cityClick(city){
 $().ready(function () {
 	init();//starts the code
 });
-
-
-//I got the weathers icons from:
-//http://erikflowers.github.io/weather-icons/

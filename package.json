@@ -1,0 +1,25 @@
+{
+  "name": "localweather",
+  "version": "1.0.0",
+  "description": "Completed October 13, 2016",
+  "main": "js1.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "parcel index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valeriaoshiro/localWeather.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/valeriaoshiro/localWeather/issues"
+  },
+  "homepage": "https://github.com/valeriaoshiro/localWeather#readme",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  }
+}
